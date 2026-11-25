@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EliteLaunch - Launch EaglerCraft fast & easy</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-glow"></div>
+
+    <div class="launcher-wrapper">
+        <header class="launcher-header">
+            <div class="logo-area">
+                <div class="cube-icon"></div>
+                <div>
+                    <h1>EliteLaunch</h1>
+                    <p class="tagline">Launch EaglerCraft fast &amp; easy</p>
+                </div>
+            </div>
+            <div class="studio-badge">
+                <span>BY SHAHADAH STUDIOS ELITE</span>
+            </div>
+        </header>
+
+        <main class="launcher-body">
+            <div class="banner-card">
+                <span class="status-pill"><span class="dot"></span> Ready for GitHub Pages</span>
+                <h2>Minecraft 1.8.8 Web Edition</h2>
+                <p>Experience classic PvP, smooth frame rates, and instant browser loading without downloads.</p>
+            </div>
+
+            <div class="controls-grid">
+                <div class="control-group">
+                    <label for="version-select">Select Version</label>
+                    <select id="version-select">
+                        <option value="1-8-8.html" selected>Release 1.8.8 (Standard)</option>
+                        <option value="coming-soon" disabled>Release 1.5.2 (Coming Soon)</option>
+                        <option value="coming-soon" disabled>Beta 1.7.3 (Coming Soon)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="launch-mode">Launch Mode</label>
+                    <select id="launch-mode">
+                        <option value="embed">Fullscreen Embedded Frame</option>
+                        <option value="tab">New Browser Tab</option>
+                        <option value="cloak">about:blank Cloak Tab</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="action-area">
+                <button id="launch-btn" class="play-button">
+                    <span class="play-icon">&#9654;</span>
+                    <span id="launch-text">LAUNCH 1.8.8</span>
+                </button>
+                <p id="status-message" class="status-text"></p>
+            </div>
+        </main>
+
+        <footer class="launcher-footer">
+            <p>&copy; 2026 <strong>Shahadah Studios Elite</strong>. All rights reserved.</p>
+            <p class="disclaimer">Not affiliated with Mojang AB or Microsoft.</p>
+        </footer>
+    </div>
+
+    <!-- Embedded Game Container -->
+    <div id="game-overlay" class="game-overlay hidden">
+        <div class="overlay-bar">
+            <span class="overlay-title">EliteLaunch &mdash; 1.8.8</span>
+            <div class="overlay-actions">
+                <button id="fullscreen-btn" class="bar-btn">Fullscreen</button>
+                <button id="close-game-btn" class="bar-btn danger">Close Game</button>
+            </div>
+        </div>
+        <iframe id="game-frame" src="" allowfullscreen></iframe>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
