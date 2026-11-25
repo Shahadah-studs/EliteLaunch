@@ -11,8 +11,37 @@ document.addEventListener("DOMContentLoaded", () => {
     const gameOverlay = document.getElementById("game-overlay");
     const overlayTitle = document.getElementById("overlay-title");
     const gameFrame = document.getElementById("game-frame");
+    const focusGameBtn = document.getElementById("focus-game-btn");
     const fullscreenBtn = document.getElementById("fullscreen-btn");
     const closeGameBtn = document.getElementById("close-game-btn");
+
+    // Helper: Force focus into the game iframe and its internal canvas/inputs
+    function focusGameCanvas() {
+        if (gameOverlay.classList.contains("hidden")) return;
+        
+        // Blur any active button on the parent launcher so Spacebar doesn't click it
+        if (document.activeElement && document.activeElement !== gameFrame) {
+            document.activeElement.blur();
+        }
+
+        gameFrame.focus();
+
+        try {
+            if (gameFrame.contentWindow) {
+                gameFrame.contentWindow.focus();
+                const innerDoc = gameFrame.contentDocument || gameFrame.contentWindow.document;
+                if (innerDoc) {
+                    const canvas = innerDoc.querySelector("canvas");
+                    if (canvas) {
+                        canvas.setAttribute("tabindex", "0");
+                        canvas.focus();
+                    }
+                }
+            }
+        } catch (err) {
+            // Safe fallback if browser restricts cross-context access
+        }
+    }
 
     // Update UI labels based on selected version
     function updateVersionUI() {
@@ -45,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
         launchModeSelect.value = savedMode;
     }
 
-    // Initialize UI on load
     updateVersionUI();
 
     versionSelect.addEventListener("change", () => {
@@ -57,6 +85,37 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("elitelaunch_mode", launchModeSelect.value);
     });
 
+    // Prevent parent page from hijacking Space/Arrow keys while game is open
+    window.addEventListener("keydown", (e) => {
+        if (!gameOverlay.classList.contains("hidden")) {
+            if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
+                if (document.activeElement !== gameFrame) {
+                    e.preventDefault();
+                    focusGameCanvas();
+                }
+            }
+        }
+    });
+
+    // Automatically focus game whenever iframe loads or user clicks/hovers it
+    gameFrame.addEventListener("load", () => {
+        focusGameCanvas();
+        try {
+            const innerWin = gameFrame.contentWindow;
+            if (innerWin) {
+                innerWin.addEventListener("mousedown", focusGameCanvas);
+                innerWin.addEventListener("keydown", (e) => {
+                    // Prevent Spacebar from scrolling the inner document
+                    if (e.code === "Space" && e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
+                        e.preventDefault();
+                    }
+                });
+            }
+        } catch (err) {}
+    });
+
+    gameFrame.addEventListener("mouseenter", focusGameCanvas);
+
     // Launch Handler
     launchBtn.addEventListener("click", () => {
         const targetFile = versionSelect.value;
@@ -67,12 +126,14 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        launchBtn.blur();
         statusMessage.textContent = `Initializing ${targetFile}...`;
 
         if (mode === "embed") {
             gameFrame.src = targetFile;
             gameOverlay.classList.remove("hidden");
             statusMessage.textContent = "";
+            setTimeout(focusGameCanvas, 200);
         } else if (mode === "tab") {
             window.open(targetFile, "_blank");
             statusMessage.textContent = "Opened in a new tab!";
@@ -95,7 +156,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     </style>
                 </head>
                 <body>
-                    <iframe src="${fullUrl}" allowfullscreen></iframe>
+                    <iframe 
+                        src="${fullUrl}" 
+                        allow="pointer-lock; fullscreen; autoplay; gamepad; clipboard-read; clipboard-write"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
+                        allowfullscreen>
+                    </iframe>
                 </body>
                 </html>
             `);
@@ -104,12 +170,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Manual Refocus button in top bar
+    focusGameBtn.addEventListener("click", () => {
+        focusGameBtn.blur();
+        focusGameCanvas();
+    });
+
     // Fullscreen toggle for embedded mode
     fullscreenBtn.addEventListener("click", () => {
+        fullscreenBtn.blur();
         if (gameFrame.requestFullscreen) {
-            gameFrame.requestFullscreen();
+            gameFrame.requestFullscreen().then(focusGameCanvas).catch(() => {});
         } else if (gameFrame.webkitRequestFullscreen) {
             gameFrame.webkitRequestFullscreen();
+            focusGameCanvas();
         }
     });
 
