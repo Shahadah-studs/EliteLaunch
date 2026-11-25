@@ -2,18 +2,56 @@ document.addEventListener("DOMContentLoaded", () => {
     const versionSelect = document.getElementById("version-select");
     const launchModeSelect = document.getElementById("launch-mode");
     const launchBtn = document.getElementById("launch-btn");
+    const launchText = document.getElementById("launch-text");
     const statusMessage = document.getElementById("status-message");
 
+    const bannerTitle = document.getElementById("banner-title");
+    const bannerDesc = document.getElementById("banner-desc");
+
     const gameOverlay = document.getElementById("game-overlay");
+    const overlayTitle = document.getElementById("overlay-title");
     const gameFrame = document.getElementById("game-frame");
     const fullscreenBtn = document.getElementById("fullscreen-btn");
     const closeGameBtn = document.getElementById("close-game-btn");
 
-    // Save user's preferred launch mode locally
+    // Update UI labels based on selected version
+    function updateVersionUI() {
+        const selectedOption = versionSelect.options[versionSelect.selectedIndex];
+        if (!selectedOption || selectedOption.value === "coming-soon") return;
+
+        const shortName = selectedOption.getAttribute("data-short") || "Game";
+        const title = selectedOption.getAttribute("data-title") || "Minecraft Web Edition";
+        const desc = selectedOption.getAttribute("data-desc") || "";
+
+        launchText.textContent = `LAUNCH ${shortName.toUpperCase()}`;
+        bannerTitle.textContent = title;
+        bannerDesc.textContent = desc;
+        overlayTitle.innerHTML = `EliteLaunch &mdash; ${shortName}`;
+    }
+
+    // Restore saved preferences
+    const savedVersion = localStorage.getItem("elitelaunch_version");
+    if (savedVersion) {
+        const optionExists = Array.from(versionSelect.options).some(
+            (opt) => opt.value === savedVersion && !opt.disabled
+        );
+        if (optionExists) {
+            versionSelect.value = savedVersion;
+        }
+    }
+
     const savedMode = localStorage.getItem("elitelaunch_mode");
     if (savedMode) {
         launchModeSelect.value = savedMode;
     }
+
+    // Initialize UI on load
+    updateVersionUI();
+
+    versionSelect.addEventListener("change", () => {
+        localStorage.setItem("elitelaunch_version", versionSelect.value);
+        updateVersionUI();
+    });
 
     launchModeSelect.addEventListener("change", () => {
         localStorage.setItem("elitelaunch_mode", launchModeSelect.value);
@@ -32,16 +70,13 @@ document.addEventListener("DOMContentLoaded", () => {
         statusMessage.textContent = `Initializing ${targetFile}...`;
 
         if (mode === "embed") {
-            // Load inside the built-in overlay iframe
             gameFrame.src = targetFile;
             gameOverlay.classList.remove("hidden");
             statusMessage.textContent = "";
         } else if (mode === "tab") {
-            // Open directly in a new tab
             window.open(targetFile, "_blank");
             statusMessage.textContent = "Opened in a new tab!";
         } else if (mode === "cloak") {
-            // Open inside an about:blank window
             const win = window.open("about:blank", "_blank");
             if (!win) {
                 statusMessage.textContent = "Popup blocked! Please allow popups for cloak mode.";
