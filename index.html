@@ -28,7 +28,7 @@
 
         <main class="launcher-body">
             <div class="banner-card">
-                <span class="status-pill"><span class="dot"></span> Ready for launch</span>
+                <span class="status-pill"><span class="dot"></span> Ready for Launch</span>
                 <h2 id="banner-title">Minecraft 1.8.8 Web Edition</h2>
                 <p id="banner-desc">Experience classic PvP, smooth frame rates, and instant browser loading without downloads.</p>
             </div>
@@ -73,11 +73,19 @@
         <div class="overlay-bar">
             <span id="overlay-title" class="overlay-title">EliteLaunch &mdash; 1.8.8</span>
             <div class="overlay-actions">
-                <button id="fullscreen-btn" class="bar-btn">Fullscreen</button>
-                <button id="close-game-btn" class="bar-btn danger">Close Game</button>
+                <button id="focus-game-btn" class="bar-btn" type="button">Refocus Controls</button>
+                <button id="fullscreen-btn" class="bar-btn" type="button">Fullscreen</button>
+                <button id="close-game-btn" class="bar-btn danger" type="button">Close Game</button>
             </div>
         </div>
-        <iframe id="game-frame" src="" allowfullscreen></iframe>
+        <iframe 
+            id="game-frame" 
+            src="" 
+            tabindex="0"
+            allow="pointer-lock; fullscreen; autoplay; gamepad; clipboard-read; clipboard-write"
+            sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
+            allowfullscreen>
+        </iframe>
     </div>
 
     <script src="script.js"></script>
