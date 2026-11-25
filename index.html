@@ -29,17 +29,17 @@
         <main class="launcher-body">
             <div class="banner-card">
                 <span class="status-pill"><span class="dot"></span> Ready for GitHub Pages</span>
-                <h2>Minecraft 1.8.8 Web Edition</h2>
-                <p>Experience classic PvP, smooth frame rates, and instant browser loading without downloads.</p>
+                <h2 id="banner-title">Minecraft 1.8.8 Web Edition</h2>
+                <p id="banner-desc">Experience classic PvP, smooth frame rates, and instant browser loading without downloads.</p>
             </div>
 
             <div class="controls-grid">
                 <div class="control-group">
                     <label for="version-select">Select Version</label>
                     <select id="version-select">
-                        <option value="Eaglercraft_IR_1.8.8.html" selected>Release 1.8.8 (IR Edition)</option>
+                        <option value="Eaglercraft_IR_1.8.8.html" data-short="1.8.8" data-title="Minecraft 1.8.8 Web Edition" data-desc="Experience classic PvP, smooth frame rates, and instant browser loading without downloads." selected>Release 1.8.8 (IR Edition)</option>
+                        <option value="Eaglercraft-1.12.2-WASM.html" data-short="1.12.2 WASM" data-title="Minecraft 1.12.2 WASM Edition" data-desc="Powered by WebAssembly for high-FPS modern gameplay, blocks, and enhanced performance.">Release 1.12.2 (WASM)</option>
                         <option value="coming-soon" disabled>Release 1.5.2 (Coming Soon)</option>
-                        <option value="coming-soon" disabled>Beta 1.7.3 (Coming Soon)</option>
                     </select>
                 </div>
 
@@ -71,7 +71,7 @@
     <!-- Embedded Game Container -->
     <div id="game-overlay" class="game-overlay hidden">
         <div class="overlay-bar">
-            <span class="overlay-title">EliteLaunch &mdash; 1.8.8</span>
+            <span id="overlay-title" class="overlay-title">EliteLaunch &mdash; 1.8.8</span>
             <div class="overlay-actions">
                 <button id="fullscreen-btn" class="bar-btn">Fullscreen</button>
                 <button id="close-game-btn" class="bar-btn danger">Close Game</button>
